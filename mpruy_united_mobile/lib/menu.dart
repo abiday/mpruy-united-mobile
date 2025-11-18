@@ -1,5 +1,10 @@
 import 'package:flutter/material.dart';
+// Impor widget Drawer
+import 'package:mpruy_united_mobile/widgets/left_drawer.dart';
+// Impor halaman Form Tambah Produk
+import 'package:mpruy_united_mobile/product_entry_form.dart';
 
+// --- DATA MODEL ---
 class ItemHomepage {
   final String name;
   final IconData icon;
@@ -8,12 +13,13 @@ class ItemHomepage {
   ItemHomepage(this.name, this.icon, this.color);
 }
 
+// --- MAIN PAGE WIDGET ---
 class MyHomePage extends StatelessWidget {
   MyHomePage({super.key});
 
-  final String nama = "Abid Dayyan Putra Rahardjo"; //nama
-  final String npm = "2406356580"; //npm
-  final String kelas = "F"; //kelas
+  final String nama = "Abid Dayyan Putra Rahardjo";
+  final String npm = "2406356580";
+  final String kelas = "F";
 
   static const Color barcaBlue = Color(0xFF004D98);
   static const Color barcaRed = Color(0xFFA50044);
@@ -24,84 +30,65 @@ class MyHomePage extends StatelessWidget {
     ItemHomepage("Create Product", Icons.add_shopping_cart, barcaBlue),
   ];
 
-  Widget _buildInfoCard(String title, String content) {
-    return Card(
-      elevation: 2.0,
-      child: Container(
-        width: 100,
-        padding: const EdgeInsets.all(8.0),
-        child: Column(
-          children: [
-            Text(
-              title,
-              style: const TextStyle(
-                fontWeight: FontWeight.bold,
-                fontSize: 12,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              content,
-              style: const TextStyle(fontSize: 11),
-              textAlign: TextAlign.center,
-              maxLines: 2,
-              overflow: TextOverflow.ellipsis,
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: const Text(
-          'Mpruy United Shop', 
+          'Mpruy United Shop',
           style: TextStyle(
             color: Colors.white,
             fontWeight: FontWeight.bold,
           ),
         ),
         backgroundColor: barcaBlue,
+        // Mengatur warna icon drawer menjadi putih agar kontras
+        iconTheme: const IconThemeData(color: Colors.white),
       ),
+      // Masukkan Drawer ke dalam Scaffold
+      drawer: const LeftDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            // Info cards for NPM, Name, and Class
-            Container(
-              margin: const EdgeInsets.only(bottom: 16.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                InfoCard(title: 'NPM', content: npm),
+                InfoCard(title: 'Name', content: nama),
+                InfoCard(title: 'Class', content: kelas),
+              ],
+            ),
+            const SizedBox(height: 16.0),
+            Center(
+              child: Column(
                 children: [
-                  _buildInfoCard('NPM', npm),
-                  _buildInfoCard('Name', nama),
-                  _buildInfoCard('Class', kelas),
+                  Padding(
+                    padding: const EdgeInsets.only(top: 16.0),
+                    child: Text(
+                      'Welcome to Mpruy United Shop',
+                      textAlign: TextAlign.center,
+                      style: TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 24.0,
+                        color: barcaBlue,
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+                  GridView.count(
+                    primary: true,
+                    padding: const EdgeInsets.all(20),
+                    crossAxisSpacing: 10,
+                    mainAxisSpacing: 10,
+                    crossAxisCount: 3,
+                    shrinkWrap: true,
+                    children: items.map((ItemHomepage item) {
+                      return ItemCard(item);
+                    }).toList(),
+                  ),
                 ],
-              ),
-            ),
-            const Text(
-              'Welcome to Mpruy United Shop',
-              style: TextStyle(
-                fontSize: 24,
-                fontWeight: FontWeight.bold,
-                color: barcaBlue,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 30),
-            Expanded(
-              child: ListView.builder(
-                itemCount: items.length,
-                itemBuilder: (context, index) {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 8.0),
-                    child: ItemCard(items[index]),
-                  );
-                },
               ),
             ),
           ],
@@ -111,6 +98,41 @@ class MyHomePage extends StatelessWidget {
   }
 }
 
+// --- INFO CARD WIDGET ---
+class InfoCard extends StatelessWidget {
+  final String title;
+  final String content;
+
+  const InfoCard({super.key, required this.title, required this.content});
+
+  @override
+  Widget build(BuildContext context) {
+    return Card(
+      elevation: 2.0,
+      child: Container(
+        width: MediaQuery.of(context).size.width / 3.5,
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          children: [
+            Text(
+              title,
+              style: const TextStyle(fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 8.0),
+            Text(
+              content,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+// --- ITEM CARD WIDGET ---
 class ItemCard extends StatelessWidget {
   final ItemHomepage item;
 
@@ -119,50 +141,48 @@ class ItemCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Material(
-      elevation: 4,
       color: item.color,
-      borderRadius: BorderRadius.circular(15),
+      borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: () {
+          // Menampilkan SnackBar
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!")),
             );
+
+          // Navigasi ke halaman ProductEntryFormPage jika itemnya "Create Product"
+          if (item.name == "Create Product") {
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProductEntryFormPage()),
+            );
+          }
         },
         child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 20.0, horizontal: 16.0),
-          child: Row(
-            children: [
-              Container(
-                padding: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.2),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(
+          padding: const EdgeInsets.all(8),
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
                   item.icon,
                   color: Colors.white,
                   size: 32.0,
                 ),
-              ),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Text(
+                const Padding(padding: EdgeInsets.all(3)),
+                Text(
                   item.name,
+                  textAlign: TextAlign.center,
                   style: const TextStyle(
                     color: Colors.white,
-                    fontSize: 20,
                     fontWeight: FontWeight.bold,
+                    fontSize: 14,
                   ),
                 ),
-              ),
-              const Icon(
-                Icons.arrow_forward_ios,
-                color: Colors.white,
-                size: 20,
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
