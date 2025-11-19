@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:mpruy_united_mobile/widgets/left_drawer.dart';
 // Impor halaman Form Tambah Produk
 import 'package:mpruy_united_mobile/product_entry_form.dart';
+// Impor halaman List Produk
+import 'package:mpruy_united_mobile/screens/list_product.dart'; 
 
 // --- DATA MODEL ---
 class ItemHomepage {
@@ -42,10 +44,8 @@ class MyHomePage extends StatelessWidget {
           ),
         ),
         backgroundColor: barcaBlue,
-        // Mengatur warna icon drawer menjadi putih agar kontras
         iconTheme: const IconThemeData(color: Colors.white),
       ),
-      // Masukkan Drawer ke dalam Scaffold
       drawer: const LeftDrawer(),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
@@ -145,18 +145,31 @@ class ItemCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(12),
       child: InkWell(
         onTap: () {
-          // Menampilkan SnackBar
           ScaffoldMessenger.of(context)
             ..hideCurrentSnackBar()
             ..showSnackBar(
               SnackBar(content: Text("Kamu telah menekan tombol ${item.name}!")),
             );
 
-          // Navigasi ke halaman ProductEntryFormPage jika itemnya "Create Product"
+          // --- NAVIGASI SESUAI TOMBOL ---
           if (item.name == "Create Product") {
             Navigator.push(
               context,
               MaterialPageRoute(builder: (context) => const ProductEntryFormPage()),
+            );
+          } 
+          else if (item.name == "All Products") {
+            // Kirim parameter false untuk melihat semua
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProductEntryPage(filterByUser: false)),
+            );
+          }
+          else if (item.name == "My Products") {
+            // Kirim parameter true untuk melihat produk sendiri
+            Navigator.push(
+              context,
+              MaterialPageRoute(builder: (context) => const ProductEntryPage(filterByUser: true)),
             );
           }
         },
