@@ -102,6 +102,7 @@ saya kemudian menggunakan `context` itu untuk "mencari" layanan yang disediakan 
 **Contoh di proyek saya:**
 ```dart
 ScaffoldMessenger.of(context).showSnackBar(...);
+```
 
 # Tugas 8: Flutter Navigation, Layouts, Forms, and Input Elements
 
@@ -162,3 +163,4 @@ Langkah implementasi saya dimulai dengan mempersiapkan backend Django terlebih d
 Setelah autentikasi bekerja, saya membuat model data product_entry.dart dengan memanfaatkan Quicktype dan menyesuaikannya secara manual untuk menangani null safety serta menambahkan field baru seperti thumbnail, second_image, dan is_featured. Langkah berikutnya adalah membuat halaman product_entry_form.dart. Di sini, saya menghadapi tantangan error 500 karena ketidakcocokan format data, sehingga saya membuat view baru create_product_flutter di Django yang secara spesifik menangani parsing json.loads dari request body. Saya juga menerapkan logika URL dinamis (kIsWeb) di Flutter untuk membedakan alamat localhost (Web) dan 10.0.2.2 (Emulator) guna mengatasi error koneksi.
 
 Terakhir, saya mengimplementasikan fitur daftar produk. Saya memodifikasi list_product.dart dan backend Django agar mendukung fitur penyaringan (filtering). Saya memperbarui fungsi show_json di Django untuk menerima parameter ?filter=user. Di Flutter, saya membuat logika pada tombol "My Products" yang mengirim parameter tersebut, sehingga pengguna bisa melihat daftar produk milik mereka sendiri secara terpisah dari daftar "All Products". Halaman product_detail.dart juga saya perbarui untuk menampilkan gambar dan detail lengkap produk secara visual.
+
